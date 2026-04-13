@@ -1,0 +1,26 @@
+### Login
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "password1"
+}
+
+### Get areas
+GET http://localhost:4000/api/areas
+
+### Create booking
+POST http://localhost:4000/api/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "areaId": "A1"
+}
+
+### Get my bookings
+GET http://localhost:4000/api/bookings/my/1
+
+### Get all bookings (admin)
+GET http://localhost:4000/api/bookings/all
