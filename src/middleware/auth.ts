@@ -10,7 +10,12 @@ declare global {
 }
 
 export function verifyToken(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.token || (req.headers.authorization && req.headers.authorization.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : undefined);
+  // If the frontend explicitly marks this as an admin request, prioritize admin token
+  const isAdminRequest = req.headers['x-admin-request'] === 'true';
+  const token = isAdminRequest 
+    ? req.cookies?.sb_admin_token 
+    : (req.cookies?.sb_token || req.cookies?.sb_admin_token);
+  
   if (!token) return res.status(401).json({ error: 'No token provided' });
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret') as any;
@@ -23,9 +28,14 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
 
 export function requireRole(role: string) {
   return (req: Request, res: Response, next: NextFunction) => {
+    // Check if the current user session matches the required role
     if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+    
+    // Explicitly check role: if a user is using a non-admin token for admin routes, reject it
     if (req.user.role === role) return next();
-    return res.status(403).json({ error: 'Forbidden' });
+    
+    // If token is valid but role doesn't match
+    return res.status(403).json({ error: 'Forbidden: Insufficient permissions' });
   };
 }
 

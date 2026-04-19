@@ -1,4 +1,6 @@
 import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRouter from './routes/auth';
@@ -10,6 +12,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: true,
+    credentials: true
+  }
+});
 const prisma = new PrismaClient();
 
 app.use(cors({ origin: true, credentials: true }));
@@ -21,12 +30,13 @@ app.use('/api/areas', areasRouter);
 app.use('/api/bookings', bookingsRouter);
 
 app.locals.prisma = prisma;
+app.locals.io = io;
 
 const port = process.env.PORT || 4000;
 
 async function start() {
   await prisma.$connect();
-  app.listen(port, () =>
+  httpServer.listen(port, () =>
     console.log(`Backend listening on http://localhost:${port}`)
   );
 }

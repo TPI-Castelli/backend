@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  username String   @unique
+  id       Int       @id @default(autoincrement())
+  username String    @unique
   password String
   role     String
   bookings Booking[]
 }
 
 model Area {
-  id       String   @id
+  id       String    @id
   name     String?
   capacity Int
   bookings Booking[]
@@ -26,8 +26,9 @@ model Booking {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  area      Area     @relation(fields: [areaId], references: [id])
-  areaId    String
+  area      Area?    @relation(fields: [areaId], references: [id], onDelete: SetNull)
+  areaId    String?
+  areaName  String?  // Store the name at the time of booking to keep logs clear
   from      DateTime
   to        DateTime
   createdAt DateTime @default(now())
