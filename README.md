@@ -1,6 +1,13 @@
 # SmartCity backend
 
-Run instructions (PowerShell):
+## Project Structure
+
+- `prisma/`: Database schema, migrations, and seed scripts.
+- `src/`: Source code for the Express API.
+- `api-tests.http`: HTTP requests for manual API testing.
+- `docker-compose.yml`: Docker configuration for the PostgreSQL database.
+
+## Run instructions (PowerShell):
 
 1. Ensure Postgres is running locally and `DATABASE_URL` in `.env` points to it.
 2. Install dependencies: pnpm install
